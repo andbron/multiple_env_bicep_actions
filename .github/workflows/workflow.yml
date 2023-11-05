@@ -22,8 +22,9 @@ jobs:
     uses: ./.github/workflows/validate_bulk.yml
     needs: lint
     with:
-      environmentType: ${{ matrix.path }}
+      # environmentType: ${{ matrix.path }}
       resourceGroupName: ToyWebsiteTest
+      reviewApiUrl: https://api.contoso.com/reviews
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}

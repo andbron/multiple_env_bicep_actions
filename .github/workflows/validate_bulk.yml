@@ -13,6 +13,10 @@ on:
       resourceGroupName:
         required: true
         type: string
+      reviewApiUrl:
+        required: true
+        type: string
+
     secrets:
       AZURE_CLIENT_ID:
         required: true
@@ -28,11 +32,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Generate matrix with all modules of WhatTheHack repository
-        # working-directory: ./deploy
+      - name: Generate matrix
+        working-directory: ./deploy
         id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)"
+          matrix=$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)
+          echo "matrix={\"include\":$(echo $matrix)}" >> $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
   checklinks:
@@ -67,19 +72,30 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Initialize Terraform
-        working-directory: ./deploy
-        run: |
-          cd ${{ matrix.path }}
-          terraform init -input=false
+      # - name: Initialize Terraform
+      #   working-directory: ${{ github.workspace }}/deploy
+      #   run: |
+      #     terraform init -input=false
 
-      - name: Plan Terraform
-        working-directory: ./deploy
-        id: plan
-        continue-on-error: true
-        run: |
-          cd deploy/${{ matrix.path }}
-          terraform plan -input=false -no-color
+      # - name: Plan Terraform
+      #   working-directory: ${{ github.workspace }}/deploy
+      #   id: plan
+      #   continue-on-error: true
+      #   run: |
+      #     terraform plan -input=false -no-color
+
+      - name: Run what-if
+        uses: azure/arm-deploy@v1
+        with:
+          failOnStdErr: false
+          resourceGroupName: ${{ inputs.resourceGroupName }}
+          template: ${{ github.workspace }}/deploy/main.bicep
+          parameters: >
+            ${{ github.workspace }}/deploy/${{ matrix }}/parameters.json
+            environmentType=${{ inputs.environmentType }}
+            reviewApiUrl=${{ inputs.reviewApiUrl }}
+            reviewApiKey=${{ secrets.reviewApiKey }}
+          additionalArguments: --what-if
 
       - name: Post Plan to GitHub PR
         uses: mshick/add-pr-comment@v1
@@ -88,7 +104,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: "github-actions[bot]"
           message: |
-            ## ${{ matrix.path }} plan
+            ## ${{ matrix }} plan
             ```
             ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
             ```
