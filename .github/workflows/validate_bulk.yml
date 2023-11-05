@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=./deploy.yml
+name: Bulk Validate
+
+on:
+  #   pull_request:
+  #     branches:
+  #       - main
+  workflow_call:
+    inputs:
+      environmentType:
+        required: true
+        type: string
+      resourceGroupName:
+        required: true
+        type: string
+    secrets:
+      AZURE_CLIENT_ID:
+        required: true
+      AZURE_TENANT_ID:
+        required: true
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+
+jobs:
+  generateInputPaths:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate matrix with all modules of WhatTheHack repository
+        id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)"
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+  checklinks:
+    needs: generateInputPaths
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
+    steps:
+      #   - uses: actions/checkout@v2
+      #   - name: Print Directory Structure
+      #     run: |
+      #       ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+      #   - name: Template Format Check
+      #     uses: jordanbean-msft/github-action-wth-template-check@v0.3.1
+      #     with:
+      #       path: ${{ github.workspace }}/${{ matrix.inputPath }}
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.9
+
+      - name: Sign in to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Initialize Terraform
+        run: |
+          cd terraform/${{ matrix.path }}
+          terraform init -input=false
+
+      - name: Plan Terraform
+        id: plan
+        continue-on-error: true
+        run: |
+          cd terraform/${{ matrix.path }}
+          terraform plan -input=false -no-color
+
+      - name: Post Plan to GitHub PR
+        uses: mshick/add-pr-comment@v1
+        with:
+          allow-repeats: true
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: "github-actions[bot]"
+          message: |
+            ## ${{ matrix.path }} plan
+            ```
+            ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
+            ```
