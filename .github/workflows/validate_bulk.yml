@@ -29,10 +29,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Generate matrix with all modules of WhatTheHack repository
-        working-directory: ./deploy
+        # working-directory: ./deploy
         id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(find ./deploy -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)"
+          echo "::set-output name=matrix::$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)"
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
   checklinks:
