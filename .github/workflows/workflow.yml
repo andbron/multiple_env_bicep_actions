@@ -17,7 +17,7 @@ jobs:
   lint:
     uses: ./.github/workflows/lint.yml
 
-  # Deploy to the test environment.
+  # Plan all stages.
   parrallel-plan:
     uses: ./.github/workflows/validate_bulk.yml
     needs: lint

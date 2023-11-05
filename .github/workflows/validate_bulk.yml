@@ -20,6 +20,8 @@ on:
         required: true
       AZURE_SUBSCRIPTION_ID:
         required: true
+      reviewApiKey:
+        required: true
 
 jobs:
   generateInputPaths:
