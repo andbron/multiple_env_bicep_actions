@@ -29,6 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Generate matrix with all modules of WhatTheHack repository
+        working-directory: ./deploy
         id: set-matrix
         run: |
           echo "::set-output name=matrix::$(find ./deploy -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)"
@@ -67,11 +68,13 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Initialize Terraform
+        working-directory: ./deploy
         run: |
-          cd deploy/${{ matrix.path }}
+          cd ${{ matrix.path }}
           terraform init -input=false
 
       - name: Plan Terraform
+        working-directory: ./deploy
         id: plan
         continue-on-error: true
         run: |
