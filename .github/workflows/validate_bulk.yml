@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Generate matrix
-        working-directory: ./deploy
+        working-directory: ${{ github.workspace }}/deploy
         id: set-matrix
         run: |
           matrix=$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)
