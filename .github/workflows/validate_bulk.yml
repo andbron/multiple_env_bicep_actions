@@ -92,7 +92,6 @@ jobs:
           template: ${{ github.workspace }}/deploy/main.bicep
           parameters: >
             ${{ github.workspace }}/deploy/${{ matrix }}/parameters.json
-            environmentType=${{ inputs.environmentType }}
             reviewApiUrl=${{ inputs.reviewApiUrl }}
             reviewApiKey=${{ secrets.reviewApiKey }}
           additionalArguments: --what-if
