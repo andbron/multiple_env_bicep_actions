@@ -38,6 +38,8 @@ jobs:
         run: |
           matrix=$(find . -mindepth 1 -type d -printf '%f\n' | jq -R . | jq -s .)
           echo "matrix={\"include\":$(echo $matrix)}" >> $GITHUB_OUTPUT
+          echo '#################################'
+          echo $matrix
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
   checklinks:
@@ -60,10 +62,10 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.0.9
+      # - name: Setup Terraform
+      #   uses: hashicorp/setup-terraform@v1
+      #   with:
+      #     terraform_version: 1.0.9
 
       - name: Sign in to Azure
         uses: azure/login@v1
