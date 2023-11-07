@@ -42,11 +42,11 @@ jobs:
           echo $matrix
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-  checklinks:
+
+  validate:
     needs: generateInputPaths
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
     steps:
@@ -93,7 +93,7 @@ jobs:
           resourceGroupName: ${{ inputs.resourceGroupName }}
           template: ${{ github.workspace }}/deploy/main.bicep
           parameters: >
-            ${{ github.workspace }}/deploy/${{ matrix }}/parameters.json
+            ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json
             reviewApiUrl=${{ inputs.reviewApiUrl }}
             reviewApiKey=${{ secrets.reviewApiKey }}
           additionalArguments: --what-if
@@ -105,7 +105,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: "github-actions[bot]"
           message: |
-            ## ${{ matrix }} plan
+            ## ${{ matrix.path }} plan
             ```
             ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}
             ```
