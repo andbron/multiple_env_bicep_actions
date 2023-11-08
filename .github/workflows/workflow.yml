@@ -36,7 +36,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     needs: parrallel-plan
     with:
-      environmentType: Test
+      environmentType: test
       resourceGroupName: ToyWebsiteTest
       reviewApiUrl: https://sandbox.contoso.com/reviews
     secrets:
@@ -50,7 +50,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     needs: deploy-test
     with:
-      environmentType: Production
+      environmentType: production
       resourceGroupName: ToyWebsiteProduction
       reviewApiUrl: https://api.contoso.com/reviews
     secrets:
