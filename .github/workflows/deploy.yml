@@ -83,7 +83,7 @@ jobs:
           resourceGroupName: ${{ inputs.resourceGroupName }}
           template: ${{ github.workspace }}/deploy/main.bicep
           parameters: >
-            ${{ github.workspace }}/deploy/$${{ inputs.environmentType }}/parameters.json
+            ${{ github.workspace }}/deploy/${{ inputs.environmentType }}/parameters.json
             reviewApiUrl=${{ inputs.reviewApiUrl }}
             reviewApiKey=${{ secrets.reviewApiKey }}
 
