@@ -46,7 +46,7 @@ jobs:
       - name: Run Bicep What-If
         id: whatif
         run: |
-          bicepOutput=$(bicep build --stdout ${{ github.workspace }}/deploy/main.bicep | az deployment group what-if --resource-group myResourceGroup --template-file ${{ github.workspace }}/deploy/main.bicep --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json)
+          bicepOutput=$(bicep build --stdout ./deploy/main.bicep | az deployment group what-if --resource-group myResourceGroup --template-file ./deploy/main.bicep --parameters ./deploy/${{ matrix.path }}/parameters.json)
 
 
 
