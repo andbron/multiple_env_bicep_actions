@@ -36,6 +36,9 @@ jobs:
         path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
 
     steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
       - name: Install Bicep CLI
         run: |
           curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
