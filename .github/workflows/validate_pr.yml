@@ -5,6 +5,22 @@ on:
     branches:
       - main
 
+#Special permissions required for OIDC authentication
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  REVIEWAPIURL: "https://api.contoso.com/reviews"
+  RESOURCEGROUPNAME: "ToyWebsiteTest"
+
+secrets:
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID_TEST }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  reviewApiKey: ${{ secrets.REVIEW_API_KEY_TEST }}
+
 jobs:
   #   build:
   #     runs-on: ubuntu-latest
@@ -40,23 +56,26 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install Bicep CLI
-        run: |
-          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-          chmod +x ./bicep
-          sudo mv ./bicep /usr/local/bin/bicep
-          bicep --help
+        uses: Azure/cli@v1
+        with:
+          run: |
+            curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+            chmod +x ./bicep
+            sudo mv ./bicep /usr/local/bin/bicep
+            bicep --help
 
       - name: Run Bicep What-If
         id: whatif
-        run: |
-          bicepOutput=$(bicep build --stdout ./deploy/main.bicep | az deployment group what-if --resource-group myResourceGroup --template-file ./deploy/main.bicep --parameters ./deploy/${{ matrix.path }}/parameters.json)
-
-
-
-          bicepOutput="${bicepOutput//'%'/'%25'}"
-          bicepOutput="${bicepOutput//$'\n'/'%0A'}"
-          bicepOutput="${bicepOutput//$'\r'/'%0D'}"
-          echo "::set-output name=bicepOutput::$bicepOutput"
+        uses: Azure/cli@v1
+        with:
+          secrets:
+          reviewApiKey: ${{ secrets.reviewApiKey }}
+          run: |
+            bicepOutput=$(bicep build --stdout ./deploy/main.bicep | az deployment group what-if --resource-group $RESOURCEGROUPNAME --template-file ./deploy/main.bicep --parameters ./deploy/${{ matrix.path }}/parameters.json reviewApiUrl=$REVIEWAPIURL reviewApiKey=${{ secrets.reviewApiKey }})
+            bicepOutput="${bicepOutput//'%'/'%25'}"
+            bicepOutput="${bicepOutput//$'\n'/'%0A'}"
+            bicepOutput="${bicepOutput//$'\r'/'%0D'}"
+            echo "::set-output name=bicepOutput::$bicepOutput"
 
       - name: Create comment
         uses: peter-evans/create-or-update-comment@v1
