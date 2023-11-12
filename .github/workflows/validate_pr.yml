@@ -49,23 +49,23 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      - name: Install Bicep CLI
-        uses: Azure/cli@v1
-        with:
-          run: |
-            curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-            chmod +x ./bicep
-            sudo mv ./bicep /usr/local/bin/bicep
-            bicep --help
+      # - name: Install Bicep CLI
+      #   uses: Azure/cli@v1
+      #   with:
+      #     run: |
+      #       curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+      #       chmod +x ./bicep
+      #       sudo mv ./bicep /usr/local/bin/bicep
+      #       bicep --help
 
       - name: Run Bicep What-If
-        id: whatif
         uses: Azure/cli@v1
+        id: whatif
         with:
           secrets:
-          reviewApiKey: ${{ secrets.reviewApiKey }}
+          reviewApiKey: ${{ secrets.REVIEW_API_KEY_TEST }}
           run: |
-            bicepOutput=$(bicep build --stdout ./deploy/main.bicep | az deployment group what-if --resource-group $RESOURCEGROUPNAME --template-file ./deploy/main.bicep --parameters ./deploy/${{ matrix.path }}/parameters.json reviewApiUrl=$REVIEWAPIURL reviewApiKey=${{ secrets.reviewApiKey }})
+            bicepOutput=$(bicep build --stdout ${{ github.workspace }}/deploy/main.bicep | az deployment group what-if --resource-group $RESOURCEGROUPNAME --template-file ${{ github.workspace }}/deploy/main.bicep --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json reviewApiUrl=$REVIEWAPIURL reviewApiKey=${{ secrets.REVIEW_API_KEY_TEST }})
             bicepOutput="${bicepOutput//'%'/'%25'}"
             bicepOutput="${bicepOutput//$'\n'/'%0A'}"
             bicepOutput="${bicepOutput//$'\r'/'%0D'}"
