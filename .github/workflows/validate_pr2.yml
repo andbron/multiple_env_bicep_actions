@@ -1,13 +1,14 @@
 name: Bicep Whatif #2
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
+#   pull_request:
+#     branches:
+#       - main
+on: [push, pull_request_target]
 #Special permissions required for OIDC authentication
 permissions:
   id-token: write
