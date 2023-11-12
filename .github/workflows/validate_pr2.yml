@@ -44,10 +44,6 @@ jobs:
       matrix:
         path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
 
-    # bicep-whatif:
-    #   name: "Bicep Whatif"
-    #   runs-on: ubuntu-latest
-
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
