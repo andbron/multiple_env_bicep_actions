@@ -1,14 +1,14 @@
 name: Bicep Whatif #2
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-#   pull_request:
-#     branches:
-#       - main
-on: [push, pull_request_target]
+  pull_request:
+    branches:
+      - main
+
 #Special permissions required for OIDC authentication
 permissions:
   id-token: write
@@ -37,6 +37,7 @@ jobs:
 
   publishPR:
     needs: generateInputPaths
+    environment: ${{ matrix.path }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -55,10 +56,10 @@ jobs:
       # Authenticate to Az CLI using OIDC
       - name: "Az CLI login"
         uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        env:
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
         # Checks that all Bicep configuration files adhere to a canonical format
       - name: Bicep Lint
