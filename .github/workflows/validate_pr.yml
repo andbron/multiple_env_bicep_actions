@@ -62,9 +62,9 @@ jobs:
         uses: Azure/cli@v1
         id: whatif
         with:
-          secrets:
-          reviewApiKey: ${{ secrets.REVIEW_API_KEY_TEST }}
-          run: |
+          #   secrets:
+          #   reviewApiKey: ${{ secrets.REVIEW_API_KEY_TEST }}
+          inlineScript: |
             bicepOutput=$(bicep build --stdout ${{ github.workspace }}/deploy/main.bicep | az deployment group what-if --resource-group $RESOURCEGROUPNAME --template-file ${{ github.workspace }}/deploy/main.bicep --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json reviewApiUrl=$REVIEWAPIURL reviewApiKey=${{ secrets.REVIEW_API_KEY_TEST }})
             bicepOutput="${bicepOutput//'%'/'%25'}"
             bicepOutput="${bicepOutput//$'\n'/'%0A'}"
