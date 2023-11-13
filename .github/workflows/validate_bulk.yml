@@ -7,9 +7,6 @@ on:
   #       - main
   workflow_call:
     inputs:
-      # environmentType:
-      #   required: true
-      #   type: string
       resourceGroupName:
         required: true
         type: string
@@ -32,7 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Generate matrix
+      - name: Generate matrix ### Followed this example - https://github.com/Sylius/Sylius/blob/3464e8d0ae6673d9ee1da3d538a6b399cfcb9852/.github/workflows/packages.yml#L48
         working-directory: ${{ github.workspace }}/deploy
         id: set-matrix
         run: |
@@ -50,15 +47,6 @@ jobs:
       matrix:
         path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
     steps:
-      #   - uses: actions/checkout@v2
-      #   - name: Print Directory Structure
-      #     run: |
-      #       ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
-      #   - name: Template Format Check
-      #     uses: jordanbean-msft/github-action-wth-template-check@v0.3.1
-      #     with:
-      #       path: ${{ github.workspace }}/${{ matrix.path }}
-
       - name: Check out code
         uses: actions/checkout@v2
 
