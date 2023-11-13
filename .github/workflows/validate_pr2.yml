@@ -54,7 +54,9 @@ jobs:
           inlineScript: |
             az deployment group validate \
               --name validate-${{ github.run_id }} \
-              --template-file main.bicep \
+              --resource-group ToyWebsiteTest \
+              --template-file ${{ github.workspace }}/deploy/main.bicep \
+              --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
               --location ${{ env.LOCATION }}
 
       # Preview changes
