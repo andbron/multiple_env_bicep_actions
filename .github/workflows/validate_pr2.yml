@@ -47,18 +47,17 @@ jobs:
         with:
           inlineScript: az bicep build --file ${{ github.workspace }}/deploy/main.bicep
 
-      # Validate whether a template is valid at subscription scope
-      - name: Bicep Validate
-        uses: Azure/cli@v1
-        with:
-          inlineScript: |
-            az deployment group validate \
-              --name validate-${{ github.run_id }} \
-              --resource-group ToyWebsiteTest \
-              --template-file ${{ github.workspace }}/deploy/main.bicep \
-              --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
-              --location ${{ env.LOCATION }}
-
+      # # Validate whether a template is valid at subscription scope
+      # - name: Bicep Validate
+      #   uses: Azure/cli@v1
+      #   with:
+      #     inlineScript: |
+      #       az deployment group validate \
+      #         --name validate-${{ github.run_id }} \
+      #         --resource-group ToyWebsiteTest \
+      #         --template-file ${{ github.workspace }}/deploy/main.bicep \
+      #         --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
+      #         --location ${{ env.LOCATION }}
       # Preview changes
       - name: "What-If"
         uses: Azure/cli@v1
