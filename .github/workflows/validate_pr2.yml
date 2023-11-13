@@ -41,7 +41,7 @@ jobs:
 
   publishPR:
     needs: generateInputPaths
-    environment: ${{ matrix.path }}
+    # environment: ${{ matrix.path }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -65,7 +65,7 @@ jobs:
       - name: Bicep Lint
         uses: Azure/cli@v1
         with:
-          inlineScript: az bicep build --file main.bicep
+          inlineScript: az bicep build --file ${{ github.workspace }}/deploy/main.bicep
 
       # Validate whether a template is valid at subscription scope
       - name: Bicep Validate
