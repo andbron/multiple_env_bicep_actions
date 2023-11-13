@@ -4,11 +4,10 @@ on:
     branches:
       - main
 
-
 permissions:
-    id-token: write
-    contents: read
-    pull-requests: write
+  id-token: write
+  contents: read
+  pull-requests: write
 
 env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
@@ -30,7 +29,7 @@ jobs:
           subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
 
       - name: Load Result
-        uses: simenwo/bicep-colorize-pr@v1.0.0
+        uses: simenwo/bicep-colorize-pr@latest
         with:
           location: australiaeast
           template-file: ${{ github.workspace }}/deploy/main.bicep
