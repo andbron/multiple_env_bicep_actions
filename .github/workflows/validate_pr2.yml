@@ -20,6 +20,10 @@ env:
   REVIEWAPIURL: "https://api.contoso.com/reviews"
   RESOURCEGROUPNAME: "ToyWebsiteTest"
 
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID:
+  AZURE_SUBSCRIPTION_ID:
+
 jobs:
   generateInputPaths:
     runs-on: ubuntu-latest
@@ -49,10 +53,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: oNaiPs/secrets-to-env-action@v1
-        with:
-          secrets: ${{ toJSON(secrets) }}
-      # - run: echo "Value of MY_SECRET: $MY_SECRET"
       # Authenticate to Az CLI using OIDC
       - uses: azure/login@v1
         name: Sign in to Azure
