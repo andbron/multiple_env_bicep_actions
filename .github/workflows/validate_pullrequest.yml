@@ -28,7 +28,7 @@ jobs:
   generateInputPaths:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Generate matrix ### Followed this example - https://github.com/Sylius/Sylius/blob/3464e8d0ae6673d9ee1da3d538a6b399cfcb9852/.github/workflows/packages.yml#L48
         working-directory: ${{ github.workspace }}/deploy
         id: set-matrix
