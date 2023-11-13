@@ -29,7 +29,7 @@ jobs:
           subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
 
       - name: Load Result
-        uses: simenwo/bicep-colorize-pr@latest
+        uses: simenwo/bicep-colorize-pr@1.0.1
         with:
           location: australiaeast
           template-file: ${{ github.workspace }}/deploy/main.bicep
