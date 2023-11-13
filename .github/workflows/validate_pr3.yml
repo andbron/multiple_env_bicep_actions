@@ -4,10 +4,11 @@ on:
     branches:
       - main
 
+
 permissions:
-  pull-request: write
-  id-token: write
-  contents: read
+    id-token: write
+    contents: read
+    pull-requests: write
 
 env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
