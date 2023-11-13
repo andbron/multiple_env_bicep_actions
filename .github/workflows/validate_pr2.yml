@@ -39,7 +39,7 @@ jobs:
 
           echo "matrix=$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)" >> $GITHUB_OUTPUT
           echo '#################################'
-          echo $GITHUB_OUTPUT
+          cat $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
