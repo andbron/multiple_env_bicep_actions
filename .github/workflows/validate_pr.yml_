@@ -49,15 +49,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
 
-      # - name: Install Bicep CLI
-      #   uses: Azure/cli@v1
-      #   with:
-      #     run: |
-      #       curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
-      #       chmod +x ./bicep
-      #       sudo mv ./bicep /usr/local/bin/bicep
-      #       bicep --help
-
       - name: Run Bicep What-If
         uses: Azure/cli@v1
         id: whatif
