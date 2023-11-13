@@ -24,9 +24,28 @@ env:
   ARM_CLIENT_ID: "61d51774-3018-410f-afb2-c9c9bbf86939"
 
 jobs:
-  bicep-whatif:
-    name: "Bicep Whatif"
+  generateInputPaths:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Generate matrix ### Followed this example - https://github.com/Sylius/Sylius/blob/3464e8d0ae6673d9ee1da3d538a6b399cfcb9852/.github/workflows/packages.yml#L48
+        working-directory: ${{ github.workspace }}/deploy
+        id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)"
+          echo '#################################'
+          echo $matrix
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+  bicep-whatif:
+    name: "Bicep Whatif for PR"
+    needs: generateInputPaths
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        path: ${{ fromJson(needs.generateInputPaths.outputs.matrix) }}
 
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -65,10 +84,10 @@ jobs:
           inlineScript: |
             az deployment group what-if \
               --name whatif-${{ github.run_id }} \
-              --resource-group ToyWebsiteTest \
+              --resource-group ToyWebsite${{ matrix.path }} \
               --template-file  ${{ github.workspace }}/deploy/main.bicep \
-              --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
-              --location ${{ env.LOCATION }} > whatif
+              --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json \
+              --parameters reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} > whatif
 
         # Create string output of Whatif
       - name: Create String Output
