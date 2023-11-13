@@ -1,4 +1,4 @@
-name: "Bicep Whatif suppress deploy"
+name: "Bicep Whatif PR"
 
 on:
   push:
