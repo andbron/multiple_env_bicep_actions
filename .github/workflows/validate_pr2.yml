@@ -19,6 +19,10 @@ env:
   reviewApiUrl: "https://api.contoso.com/reviews"
   reviewApiKey: "12345"
 
+  ARM_TENANT_ID: "2449bd8c-857f-4212-84c6-819ed04fe712"
+  ARM_SUBSCRIPTION_ID: "b1b7f436-bbc7-43bd-98d9-28fb3b1c8525"
+  ARM_CLIENT_ID: "61d51774-3018-410f-afb2-c9c9bbf86939"
+
 jobs:
   bicep-whatif:
     name: "Bicep Whatif"
@@ -33,9 +37,9 @@ jobs:
       - name: "Az CLI login"
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ env.ARM_CLIENT_ID }}
+          tenant-id: ${{ env.ARM_TENANT_ID }}
+          subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
 
         # Checks that all Bicep configuration files adhere to a canonical format
       - name: Bicep Lint
@@ -51,7 +55,7 @@ jobs:
             az deployment group validate \
               --name validate-${{ github.run_id }} \
               --template-file main.bicep \
-              --location $LOCATION
+              --location ${{ env.LOCATION }}
 
       # Preview changes
       - name: "What-If"
@@ -63,7 +67,7 @@ jobs:
               --resource-group ToyWebsiteTest \
               --template-file  ${{ github.workspace }}/deploy/main.bicep \
               --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
-              --location $LOCATION > whatif
+              --location ${{ env.LOCATION }} > whatif
 
         # Create string output of Whatif
       - name: Create String Output
