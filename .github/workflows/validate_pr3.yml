@@ -10,11 +10,11 @@ permissions:
   pull-requests: write
 
 env:
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_TENANT_ID: "2449bd8c-857f-4212-84c6-819ed04fe712"
+  ARM_SUBSCRIPTION_ID: "b1b7f436-bbc7-43bd-98d9-28fb3b1c8525"
+  ARM_CLIENT_ID: "61d51774-3018-410f-afb2-c9c9bbf86939"
   reviewApiUrl: "https://api.contoso.com/reviews"
-  reviewApiKey: ${{ secrets.REVIEW_API_KEY_TEST }}
+  reviewApiKey: "12345"
 
 jobs:
   preview:
