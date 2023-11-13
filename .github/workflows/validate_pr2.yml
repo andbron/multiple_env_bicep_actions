@@ -33,9 +33,13 @@ jobs:
         working-directory: ${{ github.workspace }}/deploy
         id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)"
+          # echo "::set-output name=matrix::$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)"
+          # echo '#################################'
+          # echo $matrix
+
+          echo "matrix=(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)" >> $GITHUB_OUTPUT
           echo '#################################'
-          echo $matrix
+          echo $GITHUB_OUTPUT
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
@@ -76,18 +80,6 @@ jobs:
         with:
           inlineScript: az bicep build --file ${{ github.workspace }}/deploy/main.bicep
 
-      # # Validate whether a template is valid at subscription scope
-      # - name: Bicep Validate
-      #   uses: Azure/cli@v1
-      #   with:
-      #     inlineScript: |
-      #       az deployment group validate \
-      #         --name validate-${{ github.run_id }} \
-      #         --resource-group ToyWebsiteTest \
-      #         --template-file ${{ github.workspace }}/deploy/main.bicep \
-      #         --parameters-file ${{ github.workspace }}/deploy/test/parameters.json reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }} \
-      #         --location ${{ env.LOCATION }}
-      # Preview changes
       - name: "What-If"
         uses: Azure/cli@v1
         with:
