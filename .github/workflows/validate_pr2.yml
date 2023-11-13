@@ -57,9 +57,9 @@ jobs:
       - uses: azure/login@v1
         name: Sign in to Azure
         with:
-          client-id: $AZURECLIENTID
-          tenant-id: $AZURETENANTID
-          subscription-id: $AZURESUBSCRIPTIONID
+          client-id: ${{ env.AZURECLIENTID }}
+          tenant-id: ${{ env.AZURETENANTID }}
+          subscription-id: ${{ env.AZURESUBSCRIPTIONID }}
 
         # Checks that all Bicep configuration files adhere to a canonical format
       - name: Bicep Lint
