@@ -33,10 +33,6 @@ jobs:
         working-directory: ${{ github.workspace }}/deploy
         id: set-matrix
         run: |
-          # echo "::set-output name=matrix::$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)"
-          # echo '#################################'
-          # echo $matrix
-
           echo "matrix=$(find . -mindepth 1 -type d | sed -e 's/.\///' | sort | jq  --raw-input . | jq --slurp . | jq -c .)" >> $GITHUB_OUTPUT
           echo '#################################'
           cat $GITHUB_OUTPUT
@@ -91,21 +87,6 @@ jobs:
               --template-file  ${{ github.workspace }}/deploy/main.bicep \
               --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json \
               --parameters reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }}
-
-      # # Perform a security scan of the bicep code using checkov
-      # - name: Run Checkov action
-      #   id: checkov
-      #   uses: bridgecrewio/checkov-action@master
-      #   with:
-      #     framework: bicep
-
-      # # Upload results to GitHub Advanced Security
-      # - name: Upload SARIF file
-      #   if: success() || failure()
-      #   uses: github/codeql-action/upload-sarif@v2
-      #   with:
-      #     sarif_file: results.sarif
-      #     category: checkov
 
       - name: Checkov GitHub Action
         uses: bridgecrewio/checkov-action@v12
