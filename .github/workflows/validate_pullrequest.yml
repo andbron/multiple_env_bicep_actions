@@ -87,6 +87,7 @@ jobs:
           inlineScript: |
             az deployment group validate \
               --name validate-${{ github.run_id }} \
+              --resource-group ToyWebsite${{ matrix.path }} \
               --template-file  ${{ github.workspace }}/deploy/main.bicep \
               --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json \
               --parameters reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }}
