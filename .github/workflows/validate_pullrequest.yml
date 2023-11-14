@@ -19,10 +19,10 @@ env:
   reviewApiUrl: "https://api.contoso.com/reviews"
   reviewApiKey: "12345"
 
-  # ARM_TENANT_ID: "2449bd8c-857f-4212-84c6-819ed04fe712"
-  # ARM_SUBSCRIPTION_ID: "b1b7f436-bbc7-43bd-98d9-28fb3b1c8525"
-  # ARM_CLIENT_ID_TEST: "61d51774-3018-410f-afb2-c9c9bbf86939"
-  # ARM_CLIENT_ID_PROD: "8057493a-4738-4895-b6f8-24d143f17af6"
+  ARM_TENANT_ID: ${{ vars.VAR_ARM_TENANT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ vars.VAR_ARM_SUBSCRIPTION_ID }}
+  ARM_CLIENT_ID_TEST: ${{ vars.VAR.ARM_CLIENT_ID_TEST }}
+  ARM_CLIENT_ID_PROD: ${{ vars.VAR.ARM_CLIENT_ID_PROD }}
 
 jobs:
   generateInputPaths:
@@ -62,17 +62,17 @@ jobs:
         uses: azure/login@v1
         if: matrix.path == 'test'
         with:
-          client-id: $var_ARM_CLIENT_ID_TEST #${{ env.ARM_CLIENT_ID_TEST }}
-          tenant-id: $var_ARM_TENANT_ID #${{ env.ARM_TENANT_ID }}
-          subscription-id: $var_ARM_SUBSCRIPTION_ID #${{ env.ARM_SUBSCRIPTION_ID }}
+          client-id: $ARM_CLIENT_ID_TEST #${{ env.ARM_CLIENT_ID_TEST }}
+          tenant-id: $ARM_TENANT_ID #${{ env.ARM_TENANT_ID }}
+          subscription-id: $ARM_SUBSCRIPTION_ID #${{ env.ARM_SUBSCRIPTION_ID }}
 
       - name: "Az CLI login"
         uses: azure/login@v1
         if: matrix.path == 'production'
         with:
-          client-id: $var_ARM_CLIENT_ID_TEST #${{ env.ARM_CLIENT_ID_TEST }}
-          tenant-id: $var_ARM_TENANT_ID #${{ env.ARM_TENANT_ID }}
-          subscription-id: $var_ARM_SUBSCRIPTION_ID #${{ env.ARM_SUBSCRIPTION_ID }}
+          client-id: $ARM_CLIENT_ID_TEST #${{ env.ARM_CLIENT_ID_TEST }}
+          tenant-id: $ARM_TENANT_ID #${{ env.ARM_TENANT_ID }}
+          subscription-id: $ARM_SUBSCRIPTION_ID #${{ env.ARM_SUBSCRIPTION_ID }}
 
         # Checks that all Bicep configuration files adhere to a canonical format
       - name: Bicep Lint
