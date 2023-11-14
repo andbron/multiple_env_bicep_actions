@@ -80,6 +80,32 @@ jobs:
         with:
           inlineScript: az bicep build --file ${{ github.workspace }}/deploy/main.bicep
 
+      # Validate whether a template is valid at subscription scope
+      - name: Bicep Validate
+        uses: Azure/cli@v1
+        with:
+          inlineScript: |
+            az deployment group validate \
+              --name validate-${{ github.run_id }} \
+              --template-file  ${{ github.workspace }}/deploy/main.bicep \
+              --parameters ${{ github.workspace }}/deploy/${{ matrix.path }}/parameters.json \
+              --parameters reviewApiUrl=${{ env.reviewApiUrl }} reviewApiKey=${{ env.reviewApiKey }}
+
+      # Perform a security scan of the bicep code using checkov
+      - name: Run Checkov action
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          framework: bicep
+
+      # Upload results to GitHub Advanced Security
+      - name: Upload SARIF file
+        if: success() || failure()
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
+          category: checkov
+
       - name: "What-If"
         uses: Azure/cli@v1
         with:
